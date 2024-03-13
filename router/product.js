@@ -1,6 +1,7 @@
 const express = require('express');
 const productModel = require('../model/product')
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth')
 const product = require('../model/product');
 const router = express.Router();
 
@@ -37,7 +38,7 @@ const upload = multer(
 //total
 router.get('/', (req, res) => {
     productModel
-        .fine()
+        .find()
         .then(product => {
             res.json({
                 msg : "get products!",
@@ -61,7 +62,7 @@ router.get('/', (req, res) => {
 })
 
 //detail
-router.get('/:productId', (req, res) => {
+router.get('/:productId',checkAuth, (req, res) => {
     const id = req.params.productId
 
     productModel
@@ -86,7 +87,7 @@ router.get('/:productId', (req, res) => {
 })
 
 //register
-require.post('/',upload.single('productImage'),(req, res => {
+router.post('/',checkAuth,upload.single('productImage'),(req, res => {
 
     const {name,price} = req.body
 
@@ -116,8 +117,9 @@ require.post('/',upload.single('productImage'),(req, res => {
             })
         })
 }))
+//update
 
-router.patch('/:productId',(req,res) => {
+router.patch('/:productId',checkAuth,(req,res) => {
     const id = req.params.productId
 
     const updateOps = {}
@@ -143,7 +145,7 @@ router.patch('/:productId',(req,res) => {
 })
 
 //total DELETE
-router.delete('/', (req,res) => {
+router.delete('/',checkAuth, (req,res) => {
     productModel
         .remove()
         .then(() => {
@@ -158,7 +160,7 @@ router.delete('/', (req,res) => {
         })
 })
 //detail delete
-router.delete('/:productId',(req,res) => {
+router.delete('/:productId',checkAuth,(req,res) => {
     const id = req.productId
 
     productModel
