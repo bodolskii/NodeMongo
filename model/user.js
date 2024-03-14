@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const bcryptjs = require('bcryptjs')
-const normalize = require('normalize-url')
 const gravatar = require('gravatar')
 
 const userSchema = mongoose.Schema(
@@ -13,7 +12,7 @@ const userSchema = mongoose.Schema(
             type : String,
             required : true,
             unique : true,
-            Math : /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            match : /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
         },
         password : {

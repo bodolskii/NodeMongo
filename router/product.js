@@ -1,9 +1,16 @@
 const express = require('express');
-const productModel = require('../model/product')
 const multer = require('multer');
 const checkAuth = require('../middleware/check-auth')
-const product = require('../model/product');
 const router = express.Router();
+const {
+    products_get_all,
+    products_get_product,
+    products_post_product,
+    products_patch_product,
+    products_delete_all,
+    products_delete_product
+    
+}= require('../controller/product')
 
 const storage = multer.diskStorage(
     {
@@ -36,150 +43,20 @@ const upload = multer(
 )
 
 //total
-router.get('/', (req, res) => {
-    productModel
-        .find()
-        .then(product => {
-            res.json({
-                msg : "get products!",
-                count : products.lenght,
-                productInfo : products.map(product => {
-                    return{
-                        id : product._id,
-                        name : product.name,
-                        price : product.price,
-                        productImage : product.productImage,
-                        date : product.createdAt
-                    }
-                })
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                msg : err.message
-            })
-        })
-})
+router.get('/', products_get_all )
 
 //detail
-router.get('/:productId',checkAuth, (req, res) => {
-    const id = req.params.productId
-
-    productModel
-        .findById(id)
-        .then(product => {
-            if(!product) {
-                return res.status(400).json({
-                    msg : 'non product id'
-                })
-            }
-            res.json({
-                msg : 'get product',
-                productInfo : {
-                        id : product._id,
-                        name : product.name,
-                        price : product.price,
-                        productImage : product.productImage,
-                        date : product.createdAt
-                }
-            })
-        })
-})
+router.get('/:productId',checkAuth, products_get_product )
 
 //register
-router.post('/',checkAuth,upload.single('productImage'),(req, res => {
-
-    const {name,price} = req.body
-
-    const newProduct = new productModel({
-        name,
-        price,
-        productImage : res.file.path
-    })
-
-    newProduct
-        .save()
-        .then(product => {
-            res.json({
-                msg : 'register product!',
-                productInfo : {
-                    id : product._id,
-                    name : product.name,
-                    price : product.price,
-                    productImage : product.productImage,
-                    date : product.createdAt
-                }
-            })
-        })
-        .catch(err => {
-            res.status(500).json( {
-                msg : err.message
-            })
-        })
-}))
+router.post('/',checkAuth,upload.single('productImage'), products_post_product)
 //update
 
-router.patch('/:productId',checkAuth,(req,res) => {
-    const id = req.params.productId
-
-    const updateOps = {}
-
-    for(const ops of req.body) {
-        updateOps[ops.propName] = ops.value
-    }
-
-    productModel
-        .findByIdAndUpdate(id, {$set : updateOps})
-        .then(product => {
-            if(!product){
-                return res.status(400).json({
-                    msg : 'no product Id'
-                })
-            }
-        })
-        .catch(err => {
-            res.status(500).json({
-                msg : err.message
-            })
-        })
-})
+router.patch('/:productId',checkAuth, products_patch_product)
 
 //total DELETE
-router.delete('/',checkAuth, (req,res) => {
-    productModel
-        .remove()
-        .then(() => {
-            res.json({
-                msg : 'delete product'
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                msg : err.message
-            })
-        })
-})
+router.delete('/',checkAuth, products_delete_all )
 //detail delete
-router.delete('/:productId',checkAuth,(req,res) => {
-    const id = req.productId
-
-    productModel
-        .findByIdAndRemove(id)
-        .then( product => {
-            if(!product){
-                return res.status(400).json({
-                    msg : "no product id"
-                })
-            }
-            res.json({
-                msg : "delete product By " + id
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                msg : err.message
-            })
-        })
-})
+router.delete('/:productId',checkAuth, products_delete_product)
 
 module.exports = router
