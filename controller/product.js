@@ -56,7 +56,7 @@ exports.products_post_product =(req, res) => {
     const newProduct = new productModel({
         name,
         price,
-        productImage : res.file.path
+        productImage : req.file.path
     })
 
     newProduct
@@ -120,11 +120,11 @@ exports.products_delete_all =(req,res) => {
         })
 }
 
-exports.products_delete_product =(req,res) => {
-    const id = req.productId
+exports.products_delete_product = (req,res) => {
+    const id = req.params.productId
 
     productModel
-        .findByIdAndRemove(id)
+        .findByIdAndDelete(id)
         .then( product => {
             if(!product){
                 return res.status(400).json({

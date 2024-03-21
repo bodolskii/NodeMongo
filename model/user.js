@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const bcryptjs = require('bcryptjs')
 const gravatar = require('gravatar')
+const path = require("path");
+var normalize = path.normalize
 
 const userSchema = mongoose.Schema(
     {

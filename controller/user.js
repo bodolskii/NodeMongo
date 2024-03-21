@@ -7,7 +7,7 @@ exports.users_get_all = (req,res) => {
         .then(users => {
             res.json({
                 msg : "get users",
-                count : users.lenght,
+                count : users.length,
                 usersInfo : users.map(user => {
                     return{
                         id : user._id,
@@ -15,7 +15,7 @@ exports.users_get_all = (req,res) => {
                         emaili : user.email,
                         password : user.password,
                         profileImage : user.profileImage,
-                        role : user.role
+                        rule : user.rule
                     }
                 })
             })
@@ -55,14 +55,23 @@ exports.users_signup_user = async(req,res) =>{
 
 exports.users_login_user =  async(req,res) => {
 
-    const {email, password} = req.body
+    const {email, password} = req.body;
+
+    console.log("email : " + {email} + "// ps : " +{password})
+
     try {
-        await userModel.findOne({email})
+        const user = await userModel.findOne({email})
+
+        console.log("find " + {email})
+
         if(!user) {
+            console.log("!user")
             return res.status(401).json({
                 msg : 'user eamil, please other email'
             })
         }else {
+            console.log("password =!?")
+
             await user.comparePassword(password, (err, isMatch) => {
                 if(err || !isMatch) {
                     return res.status(402).json({
